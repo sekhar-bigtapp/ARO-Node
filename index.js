@@ -27,6 +27,20 @@ app.put('/update-quantity', (req, res, next) => {
         res.send(results);
     });
 });
+app.get('/store-transfer', (req, res) => {
+    let sql = "SELECT * FROM store_transfer";
+    connection.query(sql,function(err, results){
+        if (err) throw err;
+        res.send(results);
+    });
+});
+app.get('/job-schedule', (req, res) => {
+    let sql = "SELECT * FROM job_schedule";
+    connection.query(sql,function(err, results){
+        if (err) throw err;
+        res.send(results);
+    });
+});
 
 app.listen(port, () => {            
     console.log(`Now listening on port ${port}`); 
