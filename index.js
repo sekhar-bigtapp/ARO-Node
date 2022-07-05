@@ -41,7 +41,76 @@ app.get('/job-schedule', (req, res) => {
         res.send(results);
     });
 });
-
+app.post('/job-config', (req, res) => {
+    Pattern='Monthly';
+    if(Pattern=='Monthly'){
+    var  JN= req.body.Job_Name;
+    var  D= req.body.Day;
+    var  T= req.body.Time;
+    var  TI= req.body.Time_Duration;
+    let sql = "INSERT INTO Monthly(Job_Name,Day,Time,Time_Duration) VALUES (?,?,?,?)";
+    connection.query(sql,[JN,D,T,TI],function(err, results){
+        if (err) throw err;
+        res.send(results);
+    
+    });
+}
+else if(Pattern=='Weekly'){
+    var  JN= req.body.Job_Name;
+    var  NW= req.body.No_Of_Weeks;
+    var  T= req.body.Time;
+    var  DQ= req.body.Days;
+    let sql = "INSERT INTO Weekly(Job_Name,No_Of_Weeks,Time,Days) VALUES (?,?,?,?)";
+    connection.query(sql,[JN,NW,T,DQ],function(err, results){
+        if (err) throw err;
+        res.send(results);
+    
+    });
+}
+else{
+    var  JN= req.body.Job_Name;
+    var  ND= req.body.No_Of_Days;
+    var  T= req.body.Time;
+    let sql = "INSERT INTO Daily(Job_Name,No_Of_Days,Time) VALUES (?,?,?)";
+    connection.query(sql,[JN,ND,T],function(err, results){
+        if (err) throw err;
+        res.send(results);
+    
+    });
+}
+});
+app.post('/reorder-frequency', (req, res) => {
+    Pattern1='Weekly';
+    if(Pattern1=='Monthly'){
+    var  D= req.body.Day;
+    var  TI= req.body.Time_Duration;
+    let sql = "INSERT INTO RFMonthly(Day,Time_Duration) VALUES (?,?)";
+    connection.query(sql,[D,TI],function(err, results){
+        if (err) throw err;
+        res.send(results);
+    
+    });
+}
+else if(Pattern1=='Weekly'){
+  var  NW= req.body.No_Of_Weeks;
+    var  DQ= req.body.Days;
+    let sql = "INSERT INTO RFWeekly(No_Of_Weeks,Days) VALUES (?,?)";
+    connection.query(sql,[NW,DQ],function(err, results){
+        if (err) throw err;
+        res.send(results);
+    
+    });
+}
+else{
+    var  ND= req.body.No_Of_Days;
+    let sql = "INSERT INTO RFDaily(No_Of_Days) VALUES (?)";
+    connection.query(sql,[ND],function(err, results){
+        if (err) throw err;
+        res.send(results);
+    
+    });
+}
+});
 app.listen(port, () => {            
     console.log(`Now listening on port ${port}`); 
     connection.connect(function(err){
