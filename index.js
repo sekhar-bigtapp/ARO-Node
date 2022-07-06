@@ -42,8 +42,9 @@ app.get('/job-schedule', (req, res) => {
     });
 });
 app.post('/job-config', (req, res) => {
-    Pattern='Monthly';
-    if(Pattern=='Monthly'){
+
+    var Pattern=req.body.Pattern;
+    if(Pattern='Monthly'){
     var  JN= req.body.Job_Name;
     var  D= req.body.Day;
     var  T= req.body.Time;
@@ -55,7 +56,7 @@ app.post('/job-config', (req, res) => {
     
     });
 }
-else if(Pattern=='Weekly'){
+else if(Pattern='Weekly'){
     var  JN= req.body.Job_Name;
     var  NW= req.body.No_Of_Weeks;
     var  T= req.body.Time;
@@ -67,7 +68,7 @@ else if(Pattern=='Weekly'){
     
     });
 }
-else{
+    else{
     var  JN= req.body.Job_Name;
     var  ND= req.body.No_Of_Days;
     var  T= req.body.Time;
@@ -77,10 +78,10 @@ else{
         res.send(results);
     
     });
-}
+    }
 });
 app.post('/reorder-frequency', (req, res) => {
-    Pattern1='Weekly';
+    var Pattern1=req.body.Pattern;
     if(Pattern1=='Monthly'){
     var  D= req.body.Day;
     var  TI= req.body.Time_Duration;
