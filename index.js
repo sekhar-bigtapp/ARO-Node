@@ -44,7 +44,7 @@ app.get('/job-schedule', (req, res) => {
 app.post('/job-config', (req, res) => {
 
     var Pattern=req.body.Pattern;
-    if(Pattern='Monthly'){
+    if(Pattern=='Monthly'){
     var  JN= req.body.Job_Name;
     var  D= req.body.Day;
     var  T= req.body.Time;
@@ -56,7 +56,7 @@ app.post('/job-config', (req, res) => {
     
     });
 }
-else if(Pattern='Weekly'){
+ if(Pattern=='Weekly'){
     var  JN= req.body.Job_Name;
     var  NW= req.body.No_Of_Weeks;
     var  T= req.body.Time;
@@ -68,7 +68,7 @@ else if(Pattern='Weekly'){
     
     });
 }
-    else{
+if(Pattern=='Daily'){
     var  JN= req.body.Job_Name;
     var  ND= req.body.No_Of_Days;
     var  T= req.body.Time;
@@ -92,7 +92,7 @@ app.post('/reorder-frequency', (req, res) => {
     
     });
 }
-else if(Pattern1=='Weekly'){
+if(Pattern1=='Weekly'){
   var  NW= req.body.No_Of_Weeks;
     var  DQ= req.body.Days;
     let sql = "INSERT INTO RFWeekly(No_Of_Weeks,Days) VALUES (?,?)";
@@ -102,7 +102,7 @@ else if(Pattern1=='Weekly'){
     
     });
 }
-else{
+if(Pattern1=='Daily'){
     var  ND= req.body.No_Of_Days;
     let sql = "INSERT INTO RFDaily(No_Of_Days) VALUES (?)";
     connection.query(sql,[ND],function(err, results){
