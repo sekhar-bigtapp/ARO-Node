@@ -34,6 +34,15 @@ app.get('/store-transfer', (req, res) => {
         res.send(results);
     });
 });
+app.post('/store-transfer/save', (req, res) => {
+    var  ID=req.body.id;
+    var  ST= req.body.Store_Store_Transferd_Config;
+    let sql = "Update store_Transfer SET Store_Store_Transferd_Config='"+ST+"' where id='"+ID+"'";
+    connection.query(sql,function(err, results){
+        if (err) throw err;
+        res.send(results);
+    });
+});
 app.get('/job-schedule', (req, res) => {
     let sql = "SELECT * FROM job_schedule";
     connection.query(sql,function(err, results){
