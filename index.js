@@ -121,6 +121,47 @@ if(Pattern1=='Daily'){
     });
 }
 });
+app.post('/store-master', function(req, res) {
+    console.log(req.body);
+    let sql = "call arostore(?,?,?,?,?)";
+    connection.query(sql,[req.body.Store_Country,req.body.Store_State,req.body.Store_City,req.body.Store_Key,req.body.Store_Name], function(err, results){
+        if (err) throw err;
+        res.send(results);
+    });
+});
+app.post('/distribution-center', function(req, res) {
+    console.log(req.body);
+    let sql = "call arodistribution(?,?,?,?,?)";
+    connection.query(sql,[req.body.Country_Name,req.body.State_Name,req.body.City_Name,req.body.Distribution_Key,req.body.Distribution_Name], function(err, results){
+        if (err) throw err;
+        res.send(results);
+    });
+});
+app.post('/supplier-master', function(req, res) {
+    console.log(req.body);
+    let sql = "call arosupplier(?,?,?,?,?)";
+    connection.query(sql,[req.body.Country_Name,req.body.State_Name,req.body.City_Name,req.body.Supplier_Key,req.body.Supplier_Name], function(err, results){
+        if (err) throw err;
+        res.send(results);
+    });
+});
+app.post('/product-master', function(req, res) {
+    console.log(req.body);
+    let sql = "call aroproduct(?,?,?,?)";
+    connection.query(sql,[req.body.Product_Name,req.body.Category_Name,req.body.Status,req.body.SKU_ID], function(err, results){
+        if (err) throw err;
+        res.send(results);
+    });
+});
+app.post('/storetosupplier-master', function(req, res) {
+    console.log(req.body);
+    let sql = "call arostoresupplier(?,?,?,?)";
+    connection.query(sql,[req.body.Product_Name,req.body.Category_Name,req.body.Status,req.body.SKU_ID], function(err, results){
+        if (err) throw err;
+        res.send(results);
+    });
+});
+
 app.listen(port, () => {            
     console.log(`Now listening on port ${port}`); 
     connection.connect(function(err){
