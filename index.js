@@ -12,32 +12,35 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 app.post('/search-store', function(req, res) {
     console.log(req.body);
-    let sql = "call arosearch(?,?,?,?,?,?,?)";
-    connection.query(sql,[req.body.Date,req.body.Store_Name,req.body.Product_Categories,req.body.Sub_Categories,req.body.ABC_Class,req.body.Product_Name,req.body.SKU_CODE], function(err, results){
+    let sql = "call arosearch(?,?,?,?,?,?)";
+    connection.query(sql,[req.body.Date,req.body.Store_Name,req.body.Category_Name,req.body.Subcategory_Name,req.body.Product_Name,req.body.SKU_ID], function(err, results){
         if (err) throw err;
         res.send(results);
     });
 });
 app.put('/update-quantity', (req, res, next) => {
-    var  DA= req.body.Date;
+    var  DA= req.body.Time_Key;
+    var  SK=req.body.Store_Key;
+    var PK=req.body.Product_Key;
     var  OQ= req.body.Override_RQ;
-    let sql = "Update aro SET Override_RQ='"+OQ+"', Reorder_Qty='"+OQ+"' where Date='"+DA+"'";
-    connection.query(sql,[DA,OQ],function(err, results){
+    let sql = "Update pos_transcation SET  Re_Order_Quantity='"+OQ+"' where Time_Key='"+DA+"' AND Store_Key='"+SK+"' AND Product_Key='"+PK+"'";
+    connection.query(sql,[DA,SK,PK,OQ],function(err, results){
         if (err) throw err;
         res.send(results);
     });
 });
-app.get('/store-transfer', (req, res) => {
-    let sql = "SELECT * FROM store_transfer";
-    connection.query(sql,function(err, results){
+app.post('/store-transfer', (req, res) => {
+    let sql = "call arostoretransfer(?,?,?)";
+    connection.query(sql,[req.body.Store_Name,req.body.Store_ID,req.body.Distance],function(err, results){
         if (err) throw err;
         res.send(results);
     });
 });
 app.post('/store-transfer/save', (req, res) => {
     var  ID=req.body.id;
+    var  D=req.body.Distance;
     var  ST= req.body.Store_Store_Transferd_Config;
-    let sql = "Update store_Transfer SET Store_Store_Transferd_Config='"+ST+"' where id='"+ID+"'";
+    let sql = "Update store_Transfer SET Store_Store_Transferd_Config='"+ST+"', Distance='"+D+"' where id='"+ID+"'";
     connection.query(sql,function(err, results){
         if (err) throw err;
         res.send(results);
@@ -50,113 +53,101 @@ app.get('/job-schedule', (req, res) => {
         res.send(results);
     });
 });
-app.post('/job-config', (req, res) => {
 
-    var Pattern=req.body.Pattern;
-    if(Pattern=='Monthly'){
-    var  JN= req.body.Job_Name;
-    var  D= req.body.Day;
-    var  T= req.body.Time;
-    var  TI= req.body.Time_Duration;
-    let sql = "INSERT INTO Monthly(Job_Name,Day,Time,Time_Duration) VALUES (?,?,?,?)";
-    connection.query(sql,[JN,D,T,TI],function(err, results){
-        if (err) throw err;
-        res.send(results);
-    
-    });
-}
- if(Pattern=='Weekly'){
-    var  JN= req.body.Job_Name;
-    var  NW= req.body.No_Of_Weeks;
-    var  T= req.body.Time;
-    var  DQ= req.body.Days;
-    let sql = "INSERT INTO Weekly(Job_Name,No_Of_Weeks,Time,Days) VALUES (?,?,?,?)";
-    connection.query(sql,[JN,NW,T,DQ],function(err, results){
-        if (err) throw err;
-        res.send(results);
-    
-    });
-}
-if(Pattern=='Daily'){
-    var  JN= req.body.Job_Name;
-    var  ND= req.body.No_Of_Days;
-    var  T= req.body.Time;
-    let sql = "INSERT INTO Daily(Job_Name,No_Of_Days,Time) VALUES (?,?,?)";
-    connection.query(sql,[JN,ND,T],function(err, results){
-        if (err) throw err;
-        res.send(results);
-    
-    });
-    }
-});
-app.post('/reorder-frequency', (req, res) => {
-    var Pattern1=req.body.Pattern;
-    if(Pattern1=='Monthly'){
-    var  D= req.body.Day;
-    var  TI= req.body.Time_Duration;
-    let sql = "INSERT INTO RFMonthly(Day,Time_Duration) VALUES (?,?)";
-    connection.query(sql,[D,TI],function(err, results){
-        if (err) throw err;
-        res.send(results);
-    
-    });
-}
-if(Pattern1=='Weekly'){
-  var  NW= req.body.No_Of_Weeks;
-    var  DQ= req.body.Days;
-    let sql = "INSERT INTO RFWeekly(No_Of_Weeks,Days) VALUES (?,?)";
-    connection.query(sql,[NW,DQ],function(err, results){
-        if (err) throw err;
-        res.send(results);
-    
-    });
-}
-if(Pattern1=='Daily'){
-    var  ND= req.body.No_Of_Days;
-    let sql = "INSERT INTO RFDaily(No_Of_Days) VALUES (?)";
-    connection.query(sql,[ND],function(err, results){
-        if (err) throw err;
-        res.send(results);
-    
-    });
-}
-});
-app.post('/store-master', function(req, res) {
-    console.log(req.body);
-    let sql = "call arostore(?,?,?,?,?)";
-    connection.query(sql,[req.body.Store_Country,req.body.Store_State,req.body.Store_City,req.body.Store_Key,req.body.Store_Name], function(err, results){
+app.get('/store-names', (req, res) => {
+    let sql = "SELECT Store_Name from store_dimension";
+    connection.query(sql,function(err, results){
         if (err) throw err;
         res.send(results);
     });
 });
-app.post('/distribution-center', function(req, res) {
-    console.log(req.body);
-    let sql = "call arodistribution(?,?,?,?,?)";
-    connection.query(sql,[req.body.Country_Name,req.body.State_Name,req.body.City_Name,req.body.Distribution_Key,req.body.Distribution_Name], function(err, results){
+app.get('/product-names', (req, res) => {
+    let sql = "SELECT Product_Name from product_dimension";
+    connection.query(sql,function(err, results){
         if (err) throw err;
         res.send(results);
     });
 });
-app.post('/supplier-master', function(req, res) {
-    console.log(req.body);
-    let sql = "call arosupplier(?,?,?,?,?)";
-    connection.query(sql,[req.body.Country_Name,req.body.State_Name,req.body.City_Name,req.body.Supplier_Key,req.body.Supplier_Name], function(err, results){
-        if (err) throw err;
-        res.send(results);
-    });
-});
-app.post('/product-master', function(req, res) {
-    console.log(req.body);
-    let sql = "call aroproduct(?,?,?,?)";
-    connection.query(sql,[req.body.Product_Name,req.body.Category_Name,req.body.Status,req.body.SKU_ID], function(err, results){
-        if (err) throw err;
-        res.send(results);
-    });
-});
+
+var supplierRouter = require('./Routes/supplier');
+app.use('/', supplierRouter);
+var productRouter = require('./Routes/product');
+app.use('/', productRouter);
+var storeRouter = require('./Routes/store');
+app.use('/', storeRouter);
+var distributionRouter = require('./Routes/distribution');
+app.use('/', distributionRouter);
+var reorderRouter = require('./Routes/reorder');
+app.use('/', reorderRouter);
+var jobconfigRouter = require('./Routes/jobconfig');
+app.use('/', jobconfigRouter);
+
 app.post('/storetosupplier-master', function(req, res) {
     console.log(req.body);
     let sql = "call arostoresupplier(?,?,?,?)";
-    connection.query(sql,[req.body.Product_Name,req.body.Category_Name,req.body.Status,req.body.SKU_ID], function(err, results){
+    connection.query(sql,[req.body.Supplier_Name,req.body.Supplier_Key,req.body.Product_Name,req.body.Category_Name], function(err, results){
+        if (err) throw err;
+        res.send(results);
+    });
+});
+app.post('/interstore-config', function(req, res) {
+    console.log(req.body);
+    let sql = "call arointerstore(?,?,?,?,?)";
+    connection.query(sql,[req.body.Time_Key,req.body.Store_Name,req.body.Store_Key,req.body.SKU_ID,req.body.Product_Name], function(err, results){
+        if (err) throw err;
+        res.send(results);
+    });
+});
+app.post('/interstore-config/edit', (req, res) => {
+    var  DA=req.body.Time_Key;
+    var  QH=req.body.Quantity_On_Hand;
+    var  TQ=req.body.Transffered_Quantity;
+    var  TSN= req.body.Store_Name;
+    var  SK=req.body.Store_Key;
+    var  SK1=req.body.Store_Key;
+    var  PK=req.body.Product_Key;
+    let sql = "Update store_inventory SET Quantity_On_Hand='"+(QH-TQ)+"' where Time_Key='"+DA+"' AND Store_Key='"+SK+"' AND Product_Key='"+PK+"'";
+    connection.query(sql,[DA,QH,TQ,TSN,SK,PK],function(err, results){
+        if (err) throw err;
+        res.send(results);
+    });
+});
+app.post('/interstore-config/save', (req, res) => {
+    var  DA=req.body.Time_Key;
+    var  QH=req.body.Quantity_On_Hand;
+    var  TQ=req.body.Transffered_Quantity;
+    var  TSN= req.body.Store_Name;
+    var  SK=req.body.Store_Key;
+    var  PK=req.body.Product_Key;
+    var QT = parseInt(QH) + parseInt(TQ);
+    let sql= "Update store_inventory SET Quantity_On_Hand='"+QT+"' where Time_Key='"+DA+"' AND Store_Key='"+SK+"' AND Product_Key='"+PK+"'";
+    connection.query(sql,[DA,QH,TQ,TSN,SK,PK,QT],function(err, results){
+        if (err) throw err;
+        res.send(results);
+    });
+});
+app.post('/forecast', function(req, res) {
+    console.log(req.body);
+    let sql = "call aroforecast(?,?,?,?,?,?)";
+    connection.query(sql,[req.body.Date,req.body.Store_Name,req.body.Category_Name,req.body.Subcategory_Name,req.body.Product_Name,req.body.SKU_ID], function(err, results){
+        if (err) throw err;
+        res.send(results);
+    });
+});
+app.post('/forecast/save', function(req, res) {
+    console.log(req.body);
+    var PV=req.body.PValue;
+    let sql = "INSERT into pinformation Values(?)";
+    connection.query(sql,[PV], function(err, results){
+        if (err) throw err;
+        res.send(results);
+    });
+});
+app.get('/forecast/get-pvalues', function(req, res) {
+    console.log(req.body);
+    var PV=req.body.PValue;
+    let sql = "Select * from pinformation where PValue=(SELECT MAX(PValue) from pinformation)";
+    connection.query(sql,[PV], function(err, results){
         if (err) throw err;
         res.send(results);
     });
